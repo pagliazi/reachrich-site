@@ -1,0 +1,93 @@
+<!doctype html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API vs MCP:量化数据接入的两种范式 · ReachRich</title>
+<meta name="description" content="量化数据接入:传统 HTTP REST API 程序化取数 vs MCP(Model Context Protocol)让 LLM 直接调用工具链的对比;两者并存的最佳实践。">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://data.show.reachrich.ai/insights/api-vs-mcp-quant-data.html">
+<meta property="og:type" content="article"><meta property="og:site_name" content="ReachRich">
+<meta property="og:title" content="API vs MCP:量化数据接入的两种范式"><meta property="og:description" content="量化数据接入:传统 HTTP REST API 程序化取数 vs MCP(Model Context Protocol)让 LLM 直接调用工具链的对比;两者并存的最佳实践。">
+<meta property="og:url" content="https://data.show.reachrich.ai/insights/api-vs-mcp-quant-data.html">
+<meta property="og:image" content="https://data.show.reachrich.ai/assets/og-cover.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"API vs MCP:量化数据接入的两种范式","description":"量化数据接入:传统 HTTP REST API 程序化取数 vs MCP(Model Context Protocol)让 LLM 直接调用工具链的对比;两者并存的最佳实践。","inLanguage":"zh-CN","datePublished":"2026-05-28","dateModified":"2026-05-28","author":{"@type":"Organization","name":"ReachRich","url":"https://reachrich.ai"},"publisher":{"@type":"Organization","name":"ReachRich","url":"https://reachrich.ai","logo":{"@type":"ImageObject","url":"https://data.show.reachrich.ai/assets/logo.png"}},"image":"https://data.show.reachrich.ai/assets/og-cover.png","mainEntityOfPage":"https://data.show.reachrich.ai/insights/api-vs-mcp-quant-data.html"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ReachRich","item":"https://data.show.reachrich.ai/"},{"@type":"ListItem","position":2,"name":"洞察 Insights","item":"https://data.show.reachrich.ai/insights/index.html"},{"@type":"ListItem","position":3,"name":"API vs MCP:量化数据接入的两种范式"}]}
+</script>
+<style>
+ :root{--bg:#0b0e14;--panel:#11161f;--card:#141a24;--line:#222a36;--txt:#e6edf3;--mut:#8b949e;--acc:#58a6ff;--acc2:#3fb950}
+ *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:15.5px/1.78 -apple-system,"PingFang SC",Inter,system-ui,Arial,sans-serif}
+ .wrap{max-width:780px;margin:0 auto;padding:30px 22px 70px}
+ .crumb{font-size:13px;color:var(--mut);margin-bottom:20px} .crumb a{color:var(--acc2);text-decoration:none}
+ h1{font-size:27px;line-height:1.32;margin:0 0 18px} h2{font-size:20px;margin:32px 0 12px;padding-top:8px;border-top:1px solid var(--line)} h3{font-size:16.5px;margin:22px 0 8px;color:#dfe6ee}
+ p,li{color:#cdd6e0} a{color:var(--acc2)}
+ blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--acc);background:var(--panel);border-radius:0 8px 8px 0;color:#aeb6c2}
+ table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px} th,td{padding:8px 11px;border:1px solid var(--line);text-align:left} th{background:var(--panel)}
+ code{background:#1c2230;padding:2px 6px;border-radius:5px;font-size:13.5px} pre{background:#0d1117;border:1px solid var(--line);border-radius:9px;padding:14px;overflow:auto} pre code{background:none;padding:0}
+ ul,ol{padding-left:22px} li{margin:5px 0}
+ .nav{display:flex;gap:14px;flex-wrap:wrap;margin:28px 0 0;font-size:14px}
+ footer{border-top:1px solid var(--line);margin-top:38px;padding-top:16px;color:var(--mut);font-size:12px}
+</style><script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "HowTo", "name": "如何通过 MCP 让 LLM 直接调用量化数据", "description": "用 Model Context Protocol(MCP)把量化数据工具暴露给 Claude/Cursor/Cline 等 LLM 客户端的实施步骤。", "step": [{"@type": "HowToStep", "name": "1. 列出数据工具", "text": "定义 N 个 MCP 工具:rr_quote / rr_kline / rr_f10 / rr_money_flow 等,每个有输入参数 + 返回 schema。"}, {"@type": "HowToStep", "name": "2. 实现 MCP server", "text": "用 Anthropic 官方 SDK(Python/TS),把工具暴露成 MCP server,绑定 token 鉴权与配额。"}, {"@type": "HowToStep", "name": "3. 客户端配置", "text": "Claude/Cursor/Cline 配置 MCP server URL 与认证,LLM 即可在对话中调用工具。"}, {"@type": "HowToStep", "name": "4. 限流与审计", "text": "per-token 配额、敏感工具二次确认、每次调用审计。MCP 不解除任何安全责任。"}]}
+</script>
+</head><body><div class="wrap">
+<div class="crumb"><a href="/">ReachRich</a> › <a href="/insights/index.html">洞察</a> › API vs MCP:量化数据接入的两种范式</div>
+<h1 id="api-vs-mcp">API vs MCP:量化数据接入的两种范式</h1>
+<blockquote>
+<p>量化研究取数有两条路:<strong>HTTP API</strong>(程序自己调)和 <strong>MCP</strong>(让 LLM 直接调用工具链)。它们不是替代关系,而是面向不同使用者的两层接入。本文讲二者差异与协同。</p>
+</blockquote>
+<h2 id="http-api">HTTP API:程序的接入方式</h2>
+<p>最经典的方式。你写 Python/Go/JS,按文档拼 URL,带 token 鉴权,拿 JSON 回来:</p>
+<pre><code class="language-python">r = requests.get(&quot;https://reachrich.ai/api/market/quote&quot;,
+                 params={&quot;code&quot;:&quot;600519&quot;}, headers={&quot;Authorization&quot;: &quot;Bearer ...&quot;})
+</code></pre>
+<ul>
+<li><strong>优势</strong>:稳定、可缓存、易做批量、并发可控;</li>
+<li><strong>场景</strong>:回测 pipeline、定时数据落地、生产策略取数。</li>
+</ul>
+<h2 id="mcpllm">MCP:LLM 直接调用工具链</h2>
+<p><a href="https://modelcontextprotocol.io">MCP</a> (Model Context Protocol) 是新兴标准——让 LLM(Claude/GPT)直接发现并调用一组"工具"。对量化场景:</p>
+<ul>
+<li>LLM 在对话中自动调用 <code>rr_quote(code='600519')</code> 取实时报价;</li>
+<li>多工具组合("帮我看下 600519 的 F10、最近资金流、并对比同行业")LLM 自己分解、依次调用;</li>
+<li>用户用自然语言,不写代码。</li>
+</ul>
+<p><strong>优势</strong>:研究探索、对话式分析、低门槛接入;
+<strong>场景</strong>:研究员临时查数、AI agent 工作流、与其他 MCP 工具组合(交易/可视化)。</p>
+<h2 id="_1">不是替代,是分层</h2>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>接入方式</th>
+<th>使用者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>程序化</td>
+<td>HTTP API</td>
+<td>生产策略 / 自动化</td>
+</tr>
+<tr>
+<td>对话式</td>
+<td>MCP</td>
+<td>研究员 / LLM agent</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://data.show.reachrich.ai/">ReachRich</a> 同时提供两层——HTTP API 走 token 鉴权,MCP 直接挂到 Claude/Cursor/Cline,统一数据契约。</p>
+<h2 id="_2">安全与限流</h2>
+<p>无论哪种接入,都要做配额、鉴权、审计——尤其量化数据是<strong>有商业价值的资产</strong>,不能裸 endpoint。详见 <a href="../docs/access.html">接入方式</a>。</p>
+
+<h2>📖 相关阅读 / Related</h2>
+<ul>
+<li><a href="multi-source-data-validation.html">多源校验</a></li>
+<li><a href="news-sentiment-dict-vs-ml.html">情感分析</a></li>
+<li><a href="https://agent.show.reachrich.ai/glossary/#mcp">术语:MCP / REST API / 数据契约</a></li>
+</ul>
+<div class="nav"><a href="/insights/index.html">← 更多洞察</a> · <a href="/">首页</a> · <a href="https://reachrich.ai">reachrich.ai</a></div>
+<footer>本文仅为量化数据研究与方法论科普,不构成投资建议、投资参考、荐股或收益承诺;投资有风险,历史业绩不代表未来。Educational content on quantitative methodology — not investment advice. © 2026 ReachRich</footer>
+</div></body></html>

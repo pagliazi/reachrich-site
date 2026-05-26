@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F10 Fundamentals: ROE/EPS/BVPS Derivation &amp; Consistency · ReachRich</title>
+<meta name="description" content="Is &quot;this company&#x27;s ROE is 5 points higher&quot; a meaningful comparison? Only if both use the same convention. Fundamental derivation pitfalls are deeper than they look.">
+<meta name="keywords" content="F10 fundamentals, ROE derivation, EPS BVPS, China A-share fundamentals, TTM single-quarter annualized, convention consistency, financial data">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://data.show.reachrich.ai/insights/f10-fundamental-derivation-en.html">
+<link rel="alternate" hreflang="en" href="https://data.show.reachrich.ai/insights/f10-fundamental-derivation-en.html">
+<link rel="alternate" hreflang="zh-CN" href="https://data.show.reachrich.ai/insights/f10-fundamental-derivation.html">
+<meta property="og:type" content="article"><meta property="og:title" content="F10 Fundamentals: ROE/EPS/BVPS Derivation &amp; Consistency">
+<meta property="og:description" content="Is &quot;this company&#x27;s ROE is 5 points higher&quot; a meaningful comparison? Only if both use the same convention. Fundamental derivation pitfalls are deeper than they look.">
+<meta property="og:url" content="https://data.show.reachrich.ai/insights/f10-fundamental-derivation-en.html">
+<meta property="og:image" content="https://data.show.reachrich.ai/assets/og-cover.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"F10 Fundamentals: ROE/EPS/BVPS Derivation &amp; Consistency","description":"Is &quot;this company&#x27;s ROE is 5 points higher&quot; a meaningful comparison? Only if both use the same convention. Fundamental derivation pitfalls are deeper than they look.","inLanguage":"en","datePublished":"2026-05-29","dateModified":"2026-05-29","author":{"@type":"Organization","name":"ReachRich","url":"https://reachrich.ai"},"publisher":{"@type":"Organization","name":"ReachRich","logo":{"@type":"ImageObject","url":"https://data.show.reachrich.ai/assets/logo.png"}},"image":"https://data.show.reachrich.ai/assets/og-cover.png","mainEntityOfPage":"https://data.show.reachrich.ai/insights/f10-fundamental-derivation-en.html","keywords":"F10 fundamentals, ROE derivation, EPS BVPS, China A-share fundamentals, TTM single-quarter annualized, convention consistency, financial data"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ReachRich","item":"https://data.show.reachrich.ai/"},{"@type":"ListItem","position":2,"name":"Insights","item":"https://data.show.reachrich.ai/insights/index.html"},{"@type":"ListItem","position":3,"name":"F10 Fundamentals: ROE/EPS/BVPS Derivation &amp; Consistency"}]}
+</script>
+<style>:root{--bg:#0b0e14;--panel:#11161f;--card:#141a24;--line:#222a36;--txt:#e6edf3;--mut:#8b949e;--acc:#3fb950;--acc2:#58a6ff}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:15.5px/1.78 -apple-system,Inter,system-ui,Arial,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:30px 22px 70px}
+.crumb{font-size:13px;color:var(--mut);margin-bottom:20px} .crumb a{color:var(--acc2);text-decoration:none}
+h1{font-size:27px;line-height:1.32;margin:0 0 18px} h2{font-size:20px;margin:32px 0 12px;padding-top:8px;border-top:1px solid var(--line)} h3{font-size:16.5px;margin:22px 0 8px}
+p,li{color:#cdd6e0} a{color:var(--acc2)}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--acc);background:var(--panel);border-radius:0 8px 8px 0;color:#aeb6c2}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px} th,td{padding:8px 11px;border:1px solid var(--line);text-align:left} th{background:var(--panel)}
+code{background:#1c2230;padding:2px 6px;border-radius:5px;font-size:13.5px} pre{background:#0d1117;border:1px solid var(--line);border-radius:9px;padding:14px;overflow:auto} pre code{background:none;padding:0}
+ul,ol{padding-left:22px} li{margin:5px 0}
+.nav{display:flex;gap:14px;flex-wrap:wrap;margin:28px 0 0;font-size:14px}
+footer{border-top:1px solid var(--line);margin-top:38px;padding-top:16px;color:var(--mut);font-size:12px}
+</style></head><body><div class="wrap">
+<div class="crumb"><a href="/">ReachRich</a> › <a href="/insights/index.html">Insights</a> › F10 Fundamentals: ROE/EPS/BVPS Derivation &amp; Consistency</div>
+<h1 id="f10-fundamentals-roeepsbvps-derivation-consistency">F10 Fundamentals: ROE/EPS/BVPS Derivation &amp; Consistency</h1>
+<blockquote>
+<p>"This company's ROE is 5 points higher" — is that a meaningful comparison? Only if both use the same convention. <strong>Fundamental derivation conventions are deeper than they look</strong>, and unifying them is the data layer's job.</p>
+</blockquote>
+<h2 id="common-derived-metrics">Common derived metrics</h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Derivation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>EPS</strong></td>
+<td>Net income ÷ total shares (single-quarter / TTM / annual)</td>
+</tr>
+<tr>
+<td><strong>BVPS</strong></td>
+<td>Attributable equity ÷ total shares (period-end)</td>
+</tr>
+<tr>
+<td><strong>ROE</strong></td>
+<td>Net income ÷ avg attributable equity (TTM)</td>
+</tr>
+<tr>
+<td><strong>ROA</strong></td>
+<td>Net income ÷ avg total assets</td>
+</tr>
+<tr>
+<td><strong>Revenue growth</strong></td>
+<td>Current revenue / YoY revenue - 1</td>
+</tr>
+<tr>
+<td><strong>Dividend yield</strong></td>
+<td>TTM cash dividend / current market cap</td>
+</tr>
+</tbody>
+</table>
+<h2 id="three-convention-pitfalls">Three convention pitfalls</h2>
+<h3 id="1-ttm-vs-single-quarter-vs-annual">1. TTM vs Single-quarter vs Annual</h3>
+<p>"ROE 12%" — is it trailing 12-months (TTM), last full fiscal year, or single-quarter annualized? <strong>TTM is best for time-series comparison</strong>, but many APIs default to single-quarter annualized, which overstates vs TTM.</p>
+<h3 id="2-net-income-definition">2. Net income definition</h3>
+<p>Adjusted vs reported? Attributable to parent vs total? Most cases use <strong>net income attributable to parent, excluding non-recurring items</strong> (more stable, more reflective of core operations). Some APIs return total reported instead.</p>
+<h3 id="3-average-vs-period-end-equity">3. Average vs period-end equity</h3>
+<p>ROE denominator: "average" ((begin + end) / 2) vs "period-end". <strong>Academic standard is average</strong>; simplified version uses period-end. Difference is material when equity changes rapidly.</p>
+<h2 id="cross-source-discrepancies">Cross-source discrepancies</h2>
+<p>Same company, same point in time — <strong>ROE in EastMoney vs THS vs Tushare vs Wind can differ</strong>. Reason: each picks different conventions above. Within a single platform, conventions must be <strong>internally consistent</strong>, otherwise factor ranking gets distorted.</p>
+<h2 id="consistency-at-the-data-layer">Consistency at the data layer</h2>
+<p><a href="https://data.show.reachrich.ai/">ReachRich</a> fixes conventions at the F10 derivation layer (TTM + net-income-attributable-to-parent-excluding-non-recurring + average equity), and normalizes before returning from any upstream API.</p>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="multi-source-data-validation-en.html">Multi-source data validation</a></li>
+<li><a href="../f10-fundamental-derivation.html">中文版</a></li>
+<li><a href="https://agent.show.reachrich.ai/glossary/#roe">Glossary: F10, ROE</a></li>
+</ul>
+<div class="nav"><a href="/insights/en.html">← All EN insights</a> · <a href="/">Home</a> · <a href="https://reachrich.ai">reachrich.ai</a></div>
+<footer>For research demonstration only — not investment advice. © 2026 ReachRich</footer>
+</div></body></html>

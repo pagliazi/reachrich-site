@@ -1,0 +1,87 @@
+<!doctype html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A股复权处理:前复权、后复权与除权除息一致性 · ReachRich</title>
+<meta name="description" content="A股复权:除权除息会造成价格跳空,前复权/后复权因子保证价格连续,隔夜持仓与回测口径一致,避免假止损。">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://data.show.reachrich.ai/insights/a-share-price-adjustment.html">
+<meta property="og:type" content="article"><meta property="og:site_name" content="ReachRich">
+<meta property="og:title" content="A股复权处理:前复权、后复权与除权除息一致性"><meta property="og:description" content="A股复权:除权除息会造成价格跳空,前复权/后复权因子保证价格连续,隔夜持仓与回测口径一致,避免假止损。">
+<meta property="og:url" content="https://data.show.reachrich.ai/insights/a-share-price-adjustment.html">
+<meta property="og:image" content="https://data.show.reachrich.ai/assets/og-cover.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"A股复权处理:前复权、后复权与除权除息一致性","description":"A股复权:除权除息会造成价格跳空,前复权/后复权因子保证价格连续,隔夜持仓与回测口径一致,避免假止损。","inLanguage":"zh-CN","datePublished":"2026-05-27","dateModified":"2026-05-27","author":{"@type":"Organization","name":"ReachRich","url":"https://reachrich.ai"},"publisher":{"@type":"Organization","name":"ReachRich","url":"https://reachrich.ai","logo":{"@type":"ImageObject","url":"https://data.show.reachrich.ai/assets/logo.png"}},"image":"https://data.show.reachrich.ai/assets/og-cover.png","mainEntityOfPage":"https://data.show.reachrich.ai/insights/a-share-price-adjustment.html"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ReachRich","item":"https://data.show.reachrich.ai/"},{"@type":"ListItem","position":2,"name":"洞察 Insights","item":"https://data.show.reachrich.ai/insights/index.html"},{"@type":"ListItem","position":3,"name":"A股复权处理:前复权、后复权与除权除息一致性"}]}
+</script>
+<style>
+ :root{--bg:#0b0e14;--panel:#11161f;--card:#141a24;--line:#222a36;--txt:#e6edf3;--mut:#8b949e;--acc:#58a6ff;--acc2:#3fb950}
+ *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:15.5px/1.78 -apple-system,"PingFang SC",Inter,system-ui,Arial,sans-serif}
+ .wrap{max-width:780px;margin:0 auto;padding:30px 22px 70px}
+ .crumb{font-size:13px;color:var(--mut);margin-bottom:20px} .crumb a{color:var(--acc2);text-decoration:none}
+ h1{font-size:27px;line-height:1.32;margin:0 0 18px} h2{font-size:20px;margin:32px 0 12px;padding-top:8px;border-top:1px solid var(--line)} h3{font-size:16.5px;margin:22px 0 8px;color:#dfe6ee}
+ p,li{color:#cdd6e0} a{color:var(--acc2)}
+ blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--acc);background:var(--panel);border-radius:0 8px 8px 0;color:#aeb6c2}
+ table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px} th,td{padding:8px 11px;border:1px solid var(--line);text-align:left} th{background:var(--panel)}
+ code{background:#1c2230;padding:2px 6px;border-radius:5px;font-size:13.5px} ul,ol{padding-left:22px} li{margin:5px 0}
+ .nav{display:flex;gap:14px;flex-wrap:wrap;margin:28px 0 0;font-size:14px}
+ footer{border-top:1px solid var(--line);margin-top:38px;padding-top:16px;color:var(--mut);font-size:12px}
+</style><script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "HowTo", "name": "如何处理 A 股除权除息(XDXR)避免假止损", "description": "A 股除权除息日 raw 价格会有非交易性跳空,正确复权处理才能避免回测错算、隔夜假止损。", "step": [{"@type": "HowToStep", "name": "1. 选择复权方式", "text": "前复权适合看图与近期分析;后复权适合长周期回测与收益计算。"}, {"@type": "HowToStep", "name": "2. 在数据层统一处理", "text": "复权必须在数据契约层完成,不让上层策略各算各的。"}, {"@type": "HowToStep", "name": "3. 实时与历史口径一致", "text": "实时盘口与历史 EOD 必须用同一套复权逻辑,否则回测与盘中漂移。"}, {"@type": "HowToStep", "name": "4. 隔夜风控豁免", "text": "识别 XDXR 日,跳空触发的「假止损」不应执行。"}]}
+</script>
+</head><body><div class="wrap">
+<div class="crumb"><a href="/">ReachRich</a> › <a href="/insights/index.html">洞察</a> › A股复权处理:前复权、后复权与除权除息一致性</div>
+<h1 id="a">A股复权处理:前复权、后复权与除权除息一致性</h1>
+<blockquote>
+<p>复权是 A股数据里最容易出错、又最致命的一环。处理不当,隔夜持仓会遇到"假跳空",回测会算错收益,止损会被错误触发。本文讲复权的口径与一致性要求。</p>
+</blockquote>
+<h2 id="_1">为什么要复权</h2>
+<p>A股在<strong>除权除息(XDXR)</strong>时,股价会因送股、转增、派息而出现非交易性的跳空。比如 10 送 4,原始(raw)收盘价会"跌"约 30%,但这不是真实下跌。如果用 raw 价格:</p>
+<ul>
+<li>回测会把除权日算成巨亏;</li>
+<li>隔夜持仓的止损可能被假跳空错误触发;</li>
+<li>因子(动量/反转)会被污染。</li>
+</ul>
+<h2 id="vs">前复权 vs 后复权</h2>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>做法</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>前复权</td>
+<td>以当前价为基准,向前调整历史价</td>
+<td>看图、近期分析</td>
+</tr>
+<tr>
+<td>后复权</td>
+<td>以上市首日为基准,向后累乘</td>
+<td>长周期回测、收益计算</td>
+</tr>
+<tr>
+<td>除权除息因子</td>
+<td>保留原始价 + 复权因子</td>
+<td>灵活按需还原</td>
+</tr>
+</tbody>
+</table>
+<p>关键不是"用哪种",而是<strong>全链口径一致</strong>:实时、历史、回测、持仓成本必须用同一套复权逻辑,否则就会对不上。</p>
+<h2 id="_2">一致性是底座的职责</h2>
+<p>复权应在数据层统一处理,而非各个策略各算各的。<a href="https://data.show.reachrich.ai/">ReachRich</a> 在数据契约层做前/后复权与除权除息的一致处理,保证价格连续——上层量化研究只管用,不必为复权口径反复踩坑。</p>
+<p>详见 <a href="../docs/data-coverage.html">数据覆盖</a>。</p>
+
+<h2>📖 相关阅读 / Related</h2>
+<ul>
+<li><a href="multi-source-data-validation.html">多源数据校验</a></li>
+<li><a href="tick-data-microstructure.html">逐笔与微结构</a></li>
+<li><a href="https://agent.show.reachrich.ai/glossary/#xdxr">术语:复权 / 前复权 / 后复权 / 除权除息</a></li>
+</ul>
+<div class="nav"><a href="/insights/index.html">← 更多洞察</a> · <a href="/">首页</a> · <a href="/demo/">在线 Demo</a> · <a href="https://reachrich.ai">reachrich.ai</a></div>
+<footer>本文仅为量化数据研究与方法论科普,不构成投资建议、投资参考、荐股或收益承诺;投资有风险,历史业绩不代表未来。Educational content on quantitative methodology — not investment advice. © 2026 ReachRich</footer>
+</div></body></html>

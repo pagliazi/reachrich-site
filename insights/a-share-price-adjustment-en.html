@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-Share Price Adjustment: Forward/Backward Adjustment for XDXR · ReachRich</title>
+<meta name="description" content="In China A-share quant, ignoring XDXR (ex-rights &amp; ex-dividend) leads to fake gaps, broken backtest PnL, and triggered false stops. Forward vs backward adjustment, when to use which, and why consistency across the entire data pipeline matters.">
+<meta name="keywords" content="A-share price adjustment, XDXR, forward-adjusted, backward-adjusted, ex-dividend, ex-rights, China stock, quant data, adjusted price, split dividend">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://data.show.reachrich.ai/insights/a-share-price-adjustment-en.html">
+<link rel="alternate" hreflang="en" href="https://data.show.reachrich.ai/insights/a-share-price-adjustment-en.html">
+<link rel="alternate" hreflang="zh-CN" href="https://data.show.reachrich.ai/insights/a-share-price-adjustment.html">
+<meta property="og:type" content="article"><meta property="og:title" content="A-Share Price Adjustment: Forward/Backward Adjustment for XDXR">
+<meta property="og:description" content="In China A-share quant, ignoring XDXR (ex-rights &amp; ex-dividend) leads to fake gaps, broken backtest PnL, and triggered false stops. Forward vs backward adjustment, when to use which, and why consistency across the entire data pipeline matters.">
+<meta property="og:url" content="https://data.show.reachrich.ai/insights/a-share-price-adjustment-en.html">
+<meta property="og:image" content="https://data.show.reachrich.ai/assets/og-cover.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"A-Share Price Adjustment: Forward/Backward Adjustment for XDXR","description":"In China A-share quant, ignoring XDXR (ex-rights &amp; ex-dividend) leads to fake gaps, broken backtest PnL, and triggered false stops. Forward vs backward adjustment, when to use which, and why consistency across the entire data pipeline matters.","inLanguage":"en","datePublished":"2026-05-29","dateModified":"2026-05-29","author":{"@type":"Organization","name":"ReachRich","url":"https://reachrich.ai"},"publisher":{"@type":"Organization","name":"ReachRich","logo":{"@type":"ImageObject","url":"https://data.show.reachrich.ai/assets/logo.png"}},"image":"https://data.show.reachrich.ai/assets/og-cover.png","mainEntityOfPage":"https://data.show.reachrich.ai/insights/a-share-price-adjustment-en.html","keywords":"A-share price adjustment, XDXR, forward-adjusted, backward-adjusted, ex-dividend, ex-rights, China stock, quant data, adjusted price, split dividend"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ReachRich","item":"https://data.show.reachrich.ai/"},{"@type":"ListItem","position":2,"name":"Insights","item":"https://data.show.reachrich.ai/insights/index.html"},{"@type":"ListItem","position":3,"name":"A-Share Price Adjustment: Forward/Backward Adjustment for XDXR"}]}
+</script>
+<style>:root{--bg:#0b0e14;--panel:#11161f;--card:#141a24;--line:#222a36;--txt:#e6edf3;--mut:#8b949e;--acc:#3fb950;--acc2:#58a6ff}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:15.5px/1.78 -apple-system,Inter,system-ui,Arial,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:30px 22px 70px}
+.crumb{font-size:13px;color:var(--mut);margin-bottom:20px} .crumb a{color:var(--acc2);text-decoration:none}
+h1{font-size:27px;line-height:1.32;margin:0 0 18px} h2{font-size:20px;margin:32px 0 12px;padding-top:8px;border-top:1px solid var(--line)} h3{font-size:16.5px;margin:22px 0 8px}
+p,li{color:#cdd6e0} a{color:var(--acc2)}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--acc);background:var(--panel);border-radius:0 8px 8px 0;color:#aeb6c2}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px} th,td{padding:8px 11px;border:1px solid var(--line);text-align:left} th{background:var(--panel)}
+code{background:#1c2230;padding:2px 6px;border-radius:5px;font-size:13.5px}
+ul,ol{padding-left:22px} li{margin:5px 0}
+.nav{display:flex;gap:14px;flex-wrap:wrap;margin:28px 0 0;font-size:14px}
+footer{border-top:1px solid var(--line);margin-top:38px;padding-top:16px;color:var(--mut);font-size:12px}
+</style></head><body><div class="wrap">
+<div class="crumb"><a href="/">ReachRich</a> › <a href="/insights/index.html">Insights</a> › A-Share Price Adjustment: Forward/Backward Adjustment for XDXR</div>
+<h1 id="a-share-price-adjustment-forwardbackward-adjustment-for-xdxr">A-Share Price Adjustment: Forward/Backward Adjustment for XDXR</h1>
+<blockquote>
+<p>In China A-share quant, <strong>ignoring XDXR (ex-rights &amp; ex-dividend) is the fastest way to wreck your backtest and trigger false stops in live trading.</strong> This post explains the adjustment mechanics every A-share quant must get right.</p>
+</blockquote>
+<h2 id="why-adjustment-matters">Why adjustment matters</h2>
+<p>When a Chinese listed company executes a stock split (送股), capitalization increase (转增), or cash dividend (派息), the raw closing price drops in a <strong>non-trading "gap"</strong>. Example: a 10-for-4 stock split makes raw close drop ~30% overnight — but this is not a real decline.</p>
+<p>If you use raw prices:
+- Backtests record a massive loss on the XDXR day
+- Overnight position stops get triggered by the fake gap
+- Momentum/reversal factors get contaminated by the non-economic discontinuity</p>
+<h2 id="forward-vs-backward-adjustment">Forward vs backward adjustment</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>How</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Forward-adjusted</strong> (前复权)</td>
+<td>Re-base history to the current price</td>
+<td>Charting, recent analysis</td>
+</tr>
+<tr>
+<td><strong>Backward-adjusted</strong> (后复权)</td>
+<td>Multiply forward from listing day</td>
+<td>Long-horizon backtests, return computation</td>
+</tr>
+<tr>
+<td><strong>Adjustment factor</strong></td>
+<td>Keep raw + a per-day multiplier</td>
+<td>Flexible reconstruction</td>
+</tr>
+</tbody>
+</table>
+<p>The right method depends on use case, but <strong>consistency across the entire pipeline matters more than which method you pick.</strong> Real-time data, historical data, backtest engine, and position-cost computation must all use the same adjustment logic — otherwise live and backtest drift, and reconciliation breaks.</p>
+<h2 id="consistency-at-the-data-layer">Consistency at the data layer</h2>
+<p>Adjustment should be handled at the <strong>data contract layer</strong>, not in each strategy. Otherwise you get N strategies each implementing slightly different adjustment logic — guaranteed inconsistency.</p>
+<p><a href="https://data.show.reachrich.ai/">ReachRich</a> handles forward/backward adjustment and XDXR factors at the data contract layer, returning continuous prices. Upper-layer quant research just consumes the data — no per-strategy adjustment debugging.</p>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="multi-source-data-validation-en.html">Multi-source data validation</a></li>
+<li><a href="../a-share-price-adjustment.html">中文版</a></li>
+<li><a href="https://agent.show.reachrich.ai/glossary/#xdxr">Glossary: XDXR, forward/backward adjustment</a></li>
+</ul>
+<div class="nav"><a href="/insights/index.html">← More insights</a> · <a href="/">Home</a> · <a href="https://reachrich.ai">reachrich.ai</a></div>
+<footer>For research demonstration only — not investment advice. © 2026 ReachRich</footer>
+</div></body></html>

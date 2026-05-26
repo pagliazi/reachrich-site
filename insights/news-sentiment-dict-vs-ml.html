@@ -1,0 +1,98 @@
+<!doctype html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>新闻情感分析:词典法 vs ML 模型的取舍 · ReachRich</title>
+<meta name="description" content="量化中的金融新闻情感分析:词典法(简单、可解释)与 ML 模型(LLM/transformer,准确但黑盒)的对比与选型。">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://data.show.reachrich.ai/insights/news-sentiment-dict-vs-ml.html">
+<meta property="og:type" content="article"><meta property="og:site_name" content="ReachRich">
+<meta property="og:title" content="新闻情感分析:词典法 vs ML 模型的取舍"><meta property="og:description" content="量化中的金融新闻情感分析:词典法(简单、可解释)与 ML 模型(LLM/transformer,准确但黑盒)的对比与选型。">
+<meta property="og:url" content="https://data.show.reachrich.ai/insights/news-sentiment-dict-vs-ml.html">
+<meta property="og:image" content="https://data.show.reachrich.ai/assets/og-cover.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"新闻情感分析:词典法 vs ML 模型的取舍","description":"量化中的金融新闻情感分析:词典法(简单、可解释)与 ML 模型(LLM/transformer,准确但黑盒)的对比与选型。","inLanguage":"zh-CN","datePublished":"2026-05-28","dateModified":"2026-05-28","author":{"@type":"Organization","name":"ReachRich","url":"https://reachrich.ai"},"publisher":{"@type":"Organization","name":"ReachRich","url":"https://reachrich.ai","logo":{"@type":"ImageObject","url":"https://data.show.reachrich.ai/assets/logo.png"}},"image":"https://data.show.reachrich.ai/assets/og-cover.png","mainEntityOfPage":"https://data.show.reachrich.ai/insights/news-sentiment-dict-vs-ml.html"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ReachRich","item":"https://data.show.reachrich.ai/"},{"@type":"ListItem","position":2,"name":"洞察 Insights","item":"https://data.show.reachrich.ai/insights/index.html"},{"@type":"ListItem","position":3,"name":"新闻情感分析:词典法 vs ML 模型的取舍"}]}
+</script>
+<style>
+ :root{--bg:#0b0e14;--panel:#11161f;--card:#141a24;--line:#222a36;--txt:#e6edf3;--mut:#8b949e;--acc:#58a6ff;--acc2:#3fb950}
+ *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:15.5px/1.78 -apple-system,"PingFang SC",Inter,system-ui,Arial,sans-serif}
+ .wrap{max-width:780px;margin:0 auto;padding:30px 22px 70px}
+ .crumb{font-size:13px;color:var(--mut);margin-bottom:20px} .crumb a{color:var(--acc2);text-decoration:none}
+ h1{font-size:27px;line-height:1.32;margin:0 0 18px} h2{font-size:20px;margin:32px 0 12px;padding-top:8px;border-top:1px solid var(--line)} h3{font-size:16.5px;margin:22px 0 8px;color:#dfe6ee}
+ p,li{color:#cdd6e0} a{color:var(--acc2)}
+ blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--acc);background:var(--panel);border-radius:0 8px 8px 0;color:#aeb6c2}
+ table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px} th,td{padding:8px 11px;border:1px solid var(--line);text-align:left} th{background:var(--panel)}
+ code{background:#1c2230;padding:2px 6px;border-radius:5px;font-size:13.5px} pre{background:#0d1117;border:1px solid var(--line);border-radius:9px;padding:14px;overflow:auto} pre code{background:none;padding:0}
+ ul,ol{padding-left:22px} li{margin:5px 0}
+ .nav{display:flex;gap:14px;flex-wrap:wrap;margin:28px 0 0;font-size:14px}
+ footer{border-top:1px solid var(--line);margin-top:38px;padding-top:16px;color:var(--mut);font-size:12px}
+</style></head><body><div class="wrap">
+<div class="crumb"><a href="/">ReachRich</a> › <a href="/insights/index.html">洞察</a> › 新闻情感分析:词典法 vs ML 模型的取舍</div>
+<h1 id="vs-ml">新闻情感分析:词典法 vs ML 模型的取舍</h1>
+<blockquote>
+<p>把财经新闻量化成"利好/利空/中性"打分,是构造<strong>事件驱动因子</strong>的常见路径。两条主流路线——<strong>词典法</strong>(基于情感词典加权)和<strong>ML 模型</strong>(LLM 或微调 transformer)——各有取舍。本文讲怎么选(方法论)。</p>
+</blockquote>
+<h2 id="_1">词典法</h2>
+<p>构造一个<strong>金融领域情感词典</strong>(POS 词 32 个 / NEG 词 28 个之类),对一篇新闻按词频加权:</p>
+<pre><code>sentiment = Σ(POS hit · w_pos) - Σ(NEG hit · w_neg)
+</code></pre>
+<p><strong>优点</strong>:
+- 透明、可审计、零延迟、零成本;
+- 易于按领域定制(A股有大量"庄股""高送转""借壳"等本地金融语义);
+- 不需要训练数据,冷启动快。</p>
+<p><strong>缺点</strong>:
+- 不识别上下文反转("不会<strong>亏损</strong>" vs "<strong>亏损</strong>严重");
+- 不识别隐喻、对比、否定语境;
+- 准确率天花板有限。</p>
+<h2 id="ml-llm">ML / LLM 模型</h2>
+<p>用预训练 LLM(中文 BERT、Llama、Qwen 等)直接分类,或微调专用情感模型。</p>
+<p><strong>优点</strong>:
+- 准确率显著高于词典法,特别是复杂句式;
+- 能识别上下文、否定、对比;
+- 可以做更细粒度任务(实体抽取、关系判定)。</p>
+<p><strong>缺点</strong>:
+- 计算成本高(LLM 推理 ~秒级,大批量贵);
+- 可解释性差("为什么这条是利空?"无法直接答);
+- 需要标注数据微调,或依赖商业 API。</p>
+<h2 id="_2">实操选型</h2>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>实时大流量打分</strong>(每分钟数千篇)</td>
+<td>词典法 + 关键字典优化</td>
+</tr>
+<tr>
+<td><strong>关键新闻深度解析</strong>(财报、公告)</td>
+<td>LLM 二次精读</td>
+</tr>
+<tr>
+<td><strong>生成研究摘要</strong></td>
+<td>LLM(GPT/Claude/Qwen)做 AI 摘要</td>
+</tr>
+<tr>
+<td><strong>可解释 + 可审计场景</strong>(投顾合规)</td>
+<td>词典法主导 + LLM 抽样审核</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">数据底座层面</h2>
+<p>无论哪种方式,前提是<strong>有干净的新闻流 + 实体绑定</strong>(哪条新闻关联哪只股票/概念)。这一层 <a href="https://data.show.reachrich.ai/">ReachRich</a> 在 <a href="../docs/data-coverage.html">资讯</a> 模块统一处理,提供原文 + 情感打分 + AI 摘要,上层选用哪种打分由用户决定。</p>
+
+<h2>📖 相关阅读 / Related</h2>
+<ul>
+<li><a href="api-vs-mcp-quant-data.html">API vs MCP 接入</a></li>
+<li><a href="multi-source-data-validation.html">多源校验</a></li>
+<li><a href="https://agent.show.reachrich.ai/glossary/#sentiment">术语:情感分析 / 词典法</a></li>
+</ul>
+<div class="nav"><a href="/insights/index.html">← 更多洞察</a> · <a href="/">首页</a> · <a href="https://reachrich.ai">reachrich.ai</a></div>
+<footer>本文仅为量化数据研究与方法论科普,不构成投资建议、投资参考、荐股或收益承诺;投资有风险,历史业绩不代表未来。Educational content on quantitative methodology — not investment advice. © 2026 ReachRich</footer>
+</div></body></html>

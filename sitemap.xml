@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://data.show.reachrich.ai/</loc><lastmod>2026-05-29</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/index.html</loc><lastmod>2026-05-29</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://data.show.reachrich.ai/glossary/</loc><lastmod>2026-05-29</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/en.html</loc><lastmod>2026-05-29</lastmod><changefreq>weekly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/a-share-price-adjustment-en.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/a-share-price-adjustment.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/api-vs-mcp-quant-data.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/f10-fundamental-derivation-en.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/f10-fundamental-derivation.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/multi-source-data-validation-en.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/multi-source-data-validation.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/news-sentiment-dict-vs-ml-en.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/news-sentiment-dict-vs-ml.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/tick-data-microstructure-en.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/insights/tick-data-microstructure.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/docs/access.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/docs/data-coverage.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/docs/faq.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/docs/index.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/docs/reachrich.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://data.show.reachrich.ai/docs/reliability.html</loc><lastmod>2026-05-29</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+</urlset>

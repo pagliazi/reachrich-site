@@ -1,0 +1,25 @@
+# ReachRich
+
+> ReachRich — A股/港股/美股多市场量化数据平台:实时行情、F10基本面、资金流、复权、多源校验,API 与 MCP。
+
+声明:仅供数据研究用途,不构成投资建议。
+
+## 文档 Docs
+- [access](https://data.show.reachrich.ai/docs/access.html)
+- [data-coverage](https://data.show.reachrich.ai/docs/data-coverage.html)
+- [faq](https://data.show.reachrich.ai/docs/faq.html)
+- [index](https://data.show.reachrich.ai/docs/index.html)
+- [reachrich](https://data.show.reachrich.ai/docs/reachrich.html)
+- [reliability](https://data.show.reachrich.ai/docs/reliability.html)
+
+## 洞察 Insights (cornerstone articles)
+- [a-share-price-adjustment](https://data.show.reachrich.ai/insights/a-share-price-adjustment.html)
+- [api-vs-mcp-quant-data](https://data.show.reachrich.ai/insights/api-vs-mcp-quant-data.html)
+- [f10-fundamental-derivation](https://data.show.reachrich.ai/insights/f10-fundamental-derivation.html)
+- [multi-source-data-validation](https://data.show.reachrich.ai/insights/multi-source-data-validation.html)
+- [news-sentiment-dict-vs-ml](https://data.show.reachrich.ai/insights/news-sentiment-dict-vs-ml.html)
+- [tick-data-microstructure](https://data.show.reachrich.ai/insights/tick-data-microstructure.html)
+
+## 相关 Related
+- 产品站 reachrich.ai · GitHub github.com/pagliazi/reachrich-site
+- 实时数据门户 https://reachrich.ai

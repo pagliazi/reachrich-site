@@ -1,0 +1,99 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>News Sentiment Analysis: Lexicon vs ML Trade-offs · ReachRich</title>
+<meta name="description" content="Quantifying financial news to &quot;positive/negative/neutral&quot; scores is the standard path for event-driven factors. Two mainstream approaches — lexicon-based vs ML/LLM — each with trade-offs.">
+<meta name="keywords" content="news sentiment analysis, financial NLP, lexicon-based sentiment, LLM sentiment, China A-share news, event-driven factor, quantitative research">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://data.show.reachrich.ai/insights/news-sentiment-dict-vs-ml-en.html">
+<link rel="alternate" hreflang="en" href="https://data.show.reachrich.ai/insights/news-sentiment-dict-vs-ml-en.html">
+<link rel="alternate" hreflang="zh-CN" href="https://data.show.reachrich.ai/insights/news-sentiment-dict-vs-ml.html">
+<meta property="og:type" content="article"><meta property="og:title" content="News Sentiment Analysis: Lexicon vs ML Trade-offs">
+<meta property="og:description" content="Quantifying financial news to &quot;positive/negative/neutral&quot; scores is the standard path for event-driven factors. Two mainstream approaches — lexicon-based vs ML/LLM — each with trade-offs.">
+<meta property="og:url" content="https://data.show.reachrich.ai/insights/news-sentiment-dict-vs-ml-en.html">
+<meta property="og:image" content="https://data.show.reachrich.ai/assets/og-cover.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"News Sentiment Analysis: Lexicon vs ML Trade-offs","description":"Quantifying financial news to &quot;positive/negative/neutral&quot; scores is the standard path for event-driven factors. Two mainstream approaches — lexicon-based vs ML/LLM — each with trade-offs.","inLanguage":"en","datePublished":"2026-05-29","dateModified":"2026-05-29","author":{"@type":"Organization","name":"ReachRich","url":"https://reachrich.ai"},"publisher":{"@type":"Organization","name":"ReachRich","logo":{"@type":"ImageObject","url":"https://data.show.reachrich.ai/assets/logo.png"}},"image":"https://data.show.reachrich.ai/assets/og-cover.png","mainEntityOfPage":"https://data.show.reachrich.ai/insights/news-sentiment-dict-vs-ml-en.html","keywords":"news sentiment analysis, financial NLP, lexicon-based sentiment, LLM sentiment, China A-share news, event-driven factor, quantitative research"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ReachRich","item":"https://data.show.reachrich.ai/"},{"@type":"ListItem","position":2,"name":"Insights","item":"https://data.show.reachrich.ai/insights/index.html"},{"@type":"ListItem","position":3,"name":"News Sentiment Analysis: Lexicon vs ML Trade-offs"}]}
+</script>
+<style>:root{--bg:#0b0e14;--panel:#11161f;--card:#141a24;--line:#222a36;--txt:#e6edf3;--mut:#8b949e;--acc:#3fb950;--acc2:#58a6ff}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:15.5px/1.78 -apple-system,Inter,system-ui,Arial,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:30px 22px 70px}
+.crumb{font-size:13px;color:var(--mut);margin-bottom:20px} .crumb a{color:var(--acc2);text-decoration:none}
+h1{font-size:27px;line-height:1.32;margin:0 0 18px} h2{font-size:20px;margin:32px 0 12px;padding-top:8px;border-top:1px solid var(--line)} h3{font-size:16.5px;margin:22px 0 8px}
+p,li{color:#cdd6e0} a{color:var(--acc2)}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--acc);background:var(--panel);border-radius:0 8px 8px 0;color:#aeb6c2}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px} th,td{padding:8px 11px;border:1px solid var(--line);text-align:left} th{background:var(--panel)}
+code{background:#1c2230;padding:2px 6px;border-radius:5px;font-size:13.5px} pre{background:#0d1117;border:1px solid var(--line);border-radius:9px;padding:14px;overflow:auto} pre code{background:none;padding:0}
+ul,ol{padding-left:22px} li{margin:5px 0}
+.nav{display:flex;gap:14px;flex-wrap:wrap;margin:28px 0 0;font-size:14px}
+footer{border-top:1px solid var(--line);margin-top:38px;padding-top:16px;color:var(--mut);font-size:12px}
+</style></head><body><div class="wrap">
+<div class="crumb"><a href="/">ReachRich</a> › <a href="/insights/index.html">Insights</a> › News Sentiment Analysis: Lexicon vs ML Trade-offs</div>
+<h1 id="news-sentiment-analysis-lexicon-vs-ml-trade-offs">News Sentiment Analysis: Lexicon vs ML Trade-offs</h1>
+<blockquote>
+<p>Quantifying financial news to "positive/negative/neutral" scores is the standard path for constructing <strong>event-driven factors</strong>. Two mainstream approaches — <strong>lexicon-based</strong> and <strong>ML/LLM</strong> — each with trade-offs. This post covers when to use which.</p>
+</blockquote>
+<h2 id="lexicon-based">Lexicon-based</h2>
+<p>Build a <strong>financial-domain sentiment dictionary</strong> (e.g., 32 positive + 28 negative terms), score a news article by weighted word frequency:</p>
+<pre><code>sentiment = Σ(POS hit × w_pos) - Σ(NEG hit × w_neg)
+</code></pre>
+<p><strong>Pros</strong>:
+- Transparent, auditable, zero latency, zero cost
+- Easy to customize per domain (A-shares have lots of local financial vocabulary: 庄股 / 高送转 / 借壳)
+- No training data needed — instant cold-start</p>
+<p><strong>Cons</strong>:
+- Misses contextual reversal ("not a <strong>loss</strong>" vs "<strong>loss</strong> is severe")
+- Misses metaphor, contrast, negation
+- Accuracy ceiling is limited</p>
+<h2 id="ml-llm-based">ML / LLM-based</h2>
+<p>Use a pretrained LLM (Chinese BERT, Llama, Qwen) for direct classification, or fine-tune a domain model.</p>
+<p><strong>Pros</strong>:
+- Significantly higher accuracy, especially on complex syntax
+- Recognizes context, negation, contrast
+- Can do finer tasks (entity extraction, relation classification)</p>
+<p><strong>Cons</strong>:
+- Compute cost high (LLM inference ~seconds, batch is expensive)
+- Poor explainability ("why is this negative?" — opaque)
+- Needs labeled data or commercial API</p>
+<h2 id="selection-in-practice">Selection in practice</h2>
+<table>
+<thead>
+<tr>
+<th>Use case</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Real-time large-volume scoring</strong> (thousands per minute)</td>
+<td>Lexicon + tuned keyword library</td>
+</tr>
+<tr>
+<td><strong>Critical news deep parse</strong> (earnings, announcements)</td>
+<td>LLM secondary read</td>
+</tr>
+<tr>
+<td><strong>Research summary generation</strong></td>
+<td>LLM (GPT/Claude/Qwen) AI summary</td>
+</tr>
+<tr>
+<td><strong>Explainable + auditable</strong> (advisor compliance)</td>
+<td>Lexicon-dominant + LLM sampling</td>
+</tr>
+</tbody>
+</table>
+<h2 id="data-layer-prerequisites">Data layer prerequisites</h2>
+<p>Regardless of method, the prerequisite is a <strong>clean news stream + entity binding</strong> (which news is about which stock/concept). <a href="https://data.show.reachrich.ai/">ReachRich</a> handles this layer — raw text + sentiment scoring + AI summary; user picks which scoring to use.</p>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="mcp-vs-rest-quant-data-en.html">API vs MCP for quant data</a></li>
+<li><a href="../news-sentiment-dict-vs-ml.html">中文版</a></li>
+<li><a href="https://agent.show.reachrich.ai/glossary/#sentiment">Glossary: sentiment, lexicon, LLM</a></li>
+</ul>
+<div class="nav"><a href="/insights/en.html">← All EN insights</a> · <a href="/">Home</a> · <a href="https://reachrich.ai">reachrich.ai</a></div>
+<footer>For research demonstration only — not investment advice. © 2026 ReachRich</footer>
+</div></body></html>

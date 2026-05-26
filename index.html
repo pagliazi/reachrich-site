@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReachRich — 自研 A股/港美多市场量化数据平台 · 行情/基本面/资金流 API</title>
+<meta name="description" content="ReachRich 多市场量化数据平台:A股、港股、美股实时行情、K线、F10 基本面、资金流、复权与多源交叉校验,提供 API 与 MCP。China A-share, HK & US market data platform for quantitative research — unified schema, adjusted prices, freshness monitoring, API & MCP access.">
+<meta name="keywords" content="A股数据,量化数据平台,行情API,股票数据接口,基本面数据,资金流,复权,多源校验,港股美股数据,china stock market data,a-share,market data api,financial data,real-time quotes,fundamental data,mcp,model context protocol,quantitative finance">
+<meta name="author" content="ReachRich">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="baidu-site-verification" content="codeva-zzd7WO4cNC" />
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="canonical" href="https://data.show.reachrich.ai/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReachRich">
+<meta property="og:title" content="ReachRich — 自研 A股/港美多市场量化数据平台">
+<meta property="og:description" content="A股/港股/美股 实时行情、K线、F10 基本面、资金流、复权、多源交叉校验 — API 与 MCP。Multi-market data platform for quantitative research.">
+<meta property="og:url" content="https://data.show.reachrich.ai/">
+<meta property="og:image" content="https://data.show.reachrich.ai/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ReachRich — A股/港美多市场量化数据平台">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ReachRich — 自研 A股/港美多市场量化数据平台">
+<meta name="twitter:description" content="A股/港股/美股 实时行情、基本面、资金流、复权、多源校验 — API 与 MCP。">
+<meta name="twitter:image" content="https://data.show.reachrich.ai/assets/og-cover.png">
+<link rel="alternate" hreflang="zh-CN" href="https://data.show.reachrich.ai/">
+<link rel="alternate" hreflang="x-default" href="https://data.show.reachrich.ai/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "ReachRich",
+      "alternateName": "ReachRich 多市场量化数据平台",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "API, MCP",
+      "url": "https://data.show.reachrich.ai/",
+      "description": "Multi-market quantitative data platform for China A-shares, Hong Kong and US equities: real-time quotes, K-line, F10 fundamentals, money-flow, adjusted prices, multi-source cross-validation, with API and MCP access.",
+      "keywords": "china stock market data, a-share, market data api, fundamental data, money flow, MCP, quantitative finance",
+      "author": {"@type": "Organization", "name": "ReachRich", "url": "https://reachrich.ai"}
+    },
+    {
+      "@type": "WebSite",
+      "name": "ReachRich",
+      "url": "https://data.show.reachrich.ai/",
+      "inLanguage": ["zh-CN", "en"]
+    },
+    {
+      "@type": "Organization",
+      "name": "ReachRich",
+      "url": "https://reachrich.ai",
+      "logo": "https://data.show.reachrich.ai/assets/logo.png",
+      "email": "support@reachrich.ai",
+      "foundingDate": "2026",
+      "contactPoint": {"@type": "ContactPoint", "contactType": "customer support", "email": "support@reachrich.ai", "availableLanguage": ["zh","en"]},
+      "sameAs": ["https://github.com/pagliazi/reachrich-site", "https://github.com/pagliazi/rr-agent-site"]
+    }
+  ]
+}
+</script>
+<style>
+  :root{--bg:#0b0e14;--panel:#11161f;--card:#141a24;--line:#222a36;--txt:#e6edf3;--mut:#8b949e;--acc:#3fb950;--acc2:#58a6ff}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.7 -apple-system,"PingFang SC",Inter,system-ui,Arial,sans-serif}
+  .wrap{max-width:920px;margin:0 auto;padding:48px 20px 64px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:999px;background:#10233f;color:var(--acc2);font-size:12px;border:1px solid #1d3a5c;margin-bottom:18px}
+  h1{font-size:30px;margin:0 0 8px;line-height:1.3} .en{color:var(--mut);font-size:17px;font-weight:400;margin:0 0 18px}
+  .lead{font-size:16px;color:#cdd6e0;margin:0 0 26px}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 36px}
+  .cta a{text-decoration:none;font-size:14px;padding:10px 18px;border-radius:9px;border:1px solid var(--line)}
+  .cta a.primary{background:var(--acc2);color:#04121f;border-color:var(--acc2);font-weight:600}
+  .cta a.ghost{background:var(--panel);color:var(--txt)}
+  h2{font-size:18px;margin:34px 0 14px;color:#e6edf3}
+  .cov{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin:0 0 10px}
+  .cov .c{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px}
+  .cov .t{font-weight:600;margin-bottom:5px;font-size:14px} .cov .l{color:var(--mut);font-size:12.5px}
+  ul{padding-left:20px;color:#cdd6e0} li{margin:6px 0}
+  a{color:var(--acc2)} .mut{color:var(--mut);font-size:13px}
+  footer{border-top:1px solid var(--line);margin-top:40px;padding-top:18px;color:var(--mut);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="badge">多市场量化数据平台 · Market Data Platform</span>
+    <h1>ReachRich — 自研 A股/港美多市场量化数据平台</h1>
+    <p class="en">A multi-market data platform for China A-shares, Hong Kong &amp; US equities — built for quantitative research.</p>
+    <p class="lead"><strong>自研多市场量化数据平台</strong>。把"找数据、清数据、对数据"做成一层稳定服务:<strong>统一口径、复权对齐、多源交叉校验、实时与历史同源</strong>,内建新鲜度与质量监控。量化研究只管用数据,不必再为数据本身耗工。提供 API 与 MCP 接入。</p>
+    <div class="cta">
+      <a class="primary" href="https://reachrich.ai">▶ 进入 ReachRich 实时数据门户 →</a>
+      <a class="ghost" href="https://github.com/pagliazi/reachrich-site">GitHub 仓库</a>
+      <a class="ghost" href="https://reachrich.ai">reachrich.ai</a>
+    </div>
+  </header>
+
+  <main>
+    <h2>数据覆盖 · Data coverage</h2>
+    <div class="cov">
+      <div class="c"><div class="t">📊 行情 Quotes</div><div class="l">实时快照 · 分时 · 日/分钟/周/月 K · 秒级集合竞价 · 逐笔</div></div>
+      <div class="c"><div class="t">🔁 复权 Adjusted</div><div class="l">前复权 / 后复权 / 除权除息因子,价格连续</div></div>
+      <div class="c"><div class="t">📰 资讯 News</div><div class="l">财经新闻 · 公告 · 情绪标注 · AI 摘要</div></div>
+      <div class="c"><div class="t">🏢 基本面 Fundamentals</div><div class="l">F10 · 财务报表 · 估值 · 分红送转</div></div>
+      <div class="c"><div class="t">💰 资金 Money flow</div><div class="l">主力资金流 · 龙虎榜 · 北向资金 · 大宗交易</div></div>
+      <div class="c"><div class="t">🏷️ 板块 Sectors</div><div class="l">概念 · 行业 · 指数成分 · 板块轮动与情绪</div></div>
+    </div>
+
+    <h2>稳定与准确 · Reliability</h2>
+    <ul>
+      <li>多源交叉校验:同一指标多源比对,偏离超阈值自动标记 / 取信更可靠源</li>
+      <li>新鲜度监控:每类数据有时效阈值,过期即告警;脏数据物理约束校验拦截</li>
+      <li>高可用 7×24 · 单一上游异常自动降级 / 切换,不中断下游取数</li>
+    </ul>
+
+    <h2>文档 · Documentation</h2>
+    <ul>
+      <li><a href="/docs/reachrich.html">总览 Overview</a> · <a href="/docs/data-coverage.html">数据覆盖 Data coverage</a> · <a href="/docs/reliability.html">稳定与准确 Reliability</a></li>
+      <li><a href="/docs/access.html">接入方式 Access (API/MCP)</a> · <a href="/docs/faq.html">FAQ</a></li>
+    </ul>
+
+    <h2>与 RR-Agent 的关系 · The agent on top</h2>
+    <p class="mut">ReachRich 是数据底座(被调用方)。上层量化研究智能体 <a href="https://github.com/pagliazi/rr-agent-site">RR-Agent</a> 通过 API / MCP 调用 ReachRich 取数,完成因子挖掘、选股、组合优化与执行。体验 <a href="https://agent.show.reachrich.ai/demo/">RR-Agent 真实前端控制台</a>。</p>
+    <h2>洞察 · Insights · 术语</h2>
+    <p class="mut">📖 <a href="https://agent.show.reachrich.ai/glossary/">A股量化术语词典</a>(60+ 术语,跨域共享)· ⚖️ <a href="https://agent.show.reachrich.ai/compare/">同类对比</a> · 📚 6 篇数据工程 cornerstone:量化方法论与数据工程科普(非投资建议):<a href="/insights/index.html">阅读全部洞察 →</a></p>
+  </main>
+
+  <footer>
+    本页面为数据平台能力展示,所有内容仅供数据研究用途,不构成投资建议、投资参考、荐股或收益承诺;投资有风险,历史业绩不代表未来。 ·
+    For research demonstration only; not investment advice. © 2026 ReachRich · <a href="https://reachrich.ai">reachrich.ai</a>
+  </footer>
+</div>
+</body>
+</html>

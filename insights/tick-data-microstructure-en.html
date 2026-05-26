@@ -1,0 +1,99 @@
+<!doctype html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tick Data &amp; Microstructure: Large-Order Classification &amp; Lee-Ready · ReachRich</title>
+<meta name="description" content="Beyond daily and minute K-line, tick data carries the most micro-economic information: per-trade time, price, volume, and direction. How to parse, classify large orders, and apply Lee-Ready for active buy/sell inference.">
+<meta name="keywords" content="tick data, market microstructure, large order classification, Lee-Ready algorithm, active buy sell, China A-share microstructure, main capital flow">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://data.show.reachrich.ai/insights/tick-data-microstructure-en.html">
+<link rel="alternate" hreflang="en" href="https://data.show.reachrich.ai/insights/tick-data-microstructure-en.html">
+<link rel="alternate" hreflang="zh-CN" href="https://data.show.reachrich.ai/insights/tick-data-microstructure.html">
+<meta property="og:type" content="article"><meta property="og:title" content="Tick Data &amp; Microstructure: Large-Order Classification &amp; Lee-Ready">
+<meta property="og:description" content="Beyond daily and minute K-line, tick data carries the most micro-economic information: per-trade time, price, volume, and direction. How to parse, classify large orders, and apply Lee-Ready for active buy/sell inference.">
+<meta property="og:url" content="https://data.show.reachrich.ai/insights/tick-data-microstructure-en.html">
+<meta property="og:image" content="https://data.show.reachrich.ai/assets/og-cover.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"Tick Data &amp; Microstructure: Large-Order Classification &amp; Lee-Ready","description":"Beyond daily and minute K-line, tick data carries the most micro-economic information: per-trade time, price, volume, and direction. How to parse, classify large orders, and apply Lee-Ready for active buy/sell inference.","inLanguage":"en","datePublished":"2026-05-29","dateModified":"2026-05-29","author":{"@type":"Organization","name":"ReachRich","url":"https://reachrich.ai"},"publisher":{"@type":"Organization","name":"ReachRich","logo":{"@type":"ImageObject","url":"https://data.show.reachrich.ai/assets/logo.png"}},"image":"https://data.show.reachrich.ai/assets/og-cover.png","mainEntityOfPage":"https://data.show.reachrich.ai/insights/tick-data-microstructure-en.html","keywords":"tick data, market microstructure, large order classification, Lee-Ready algorithm, active buy sell, China A-share microstructure, main capital flow"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ReachRich","item":"https://data.show.reachrich.ai/"},{"@type":"ListItem","position":2,"name":"Insights","item":"https://data.show.reachrich.ai/insights/index.html"},{"@type":"ListItem","position":3,"name":"Tick Data &amp; Microstructure: Large-Order Classification &amp; Lee-Ready"}]}
+</script>
+<style>:root{--bg:#0b0e14;--panel:#11161f;--card:#141a24;--line:#222a36;--txt:#e6edf3;--mut:#8b949e;--acc:#3fb950;--acc2:#58a6ff}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:15.5px/1.78 -apple-system,Inter,system-ui,Arial,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:30px 22px 70px}
+.crumb{font-size:13px;color:var(--mut);margin-bottom:20px} .crumb a{color:var(--acc2);text-decoration:none}
+h1{font-size:27px;line-height:1.32;margin:0 0 18px} h2{font-size:20px;margin:32px 0 12px;padding-top:8px;border-top:1px solid var(--line)} h3{font-size:16.5px;margin:22px 0 8px}
+p,li{color:#cdd6e0} a{color:var(--acc2)}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--acc);background:var(--panel);border-radius:0 8px 8px 0;color:#aeb6c2}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px} th,td{padding:8px 11px;border:1px solid var(--line);text-align:left} th{background:var(--panel)}
+code{background:#1c2230;padding:2px 6px;border-radius:5px;font-size:13.5px} pre{background:#0d1117;border:1px solid var(--line);border-radius:9px;padding:14px;overflow:auto} pre code{background:none;padding:0}
+ul,ol{padding-left:22px} li{margin:5px 0}
+.nav{display:flex;gap:14px;flex-wrap:wrap;margin:28px 0 0;font-size:14px}
+footer{border-top:1px solid var(--line);margin-top:38px;padding-top:16px;color:var(--mut);font-size:12px}
+</style></head><body><div class="wrap">
+<div class="crumb"><a href="/">ReachRich</a> › <a href="/insights/index.html">Insights</a> › Tick Data &amp; Microstructure: Large-Order Classification &amp; Lee-Ready</div>
+<h1 id="tick-data-microstructure-large-order-classification-lee-ready">Tick Data &amp; Microstructure: Large-Order Classification &amp; Lee-Ready</h1>
+<blockquote>
+<p>Beyond daily and minute K-line, <strong>tick-by-trade data carries the most micro-economic information</strong>: per-trade time, price, volume, and direction. This post covers A-share tick structure, active buy/sell inference, and typical applications.</p>
+</blockquote>
+<h2 id="data-structure">Data structure</h2>
+<p>A-share tick records typically contain:
+- <code>time</code> — matching time (millisecond precision)
+- <code>price</code> — trade price
+- <code>volume</code> — trade volume
+- <code>side</code> — buy/sell flag (some sources omit, need inference)
+- <code>order_no</code> / <code>trade_no</code> — order/trade IDs (for linking to order book)</p>
+<h2 id="active-buysell-lee-ready-algorithm">Active buy/sell: Lee-Ready algorithm</h2>
+<p>When the source doesn't provide <code>side</code> (many A-share tick feeds have <code>side=0</code>), use the classic <strong>Lee-Ready (1991)</strong> algorithm:</p>
+<ol>
+<li>Price &gt; midprice → active <strong>buy</strong> (uptick / "outside" trade)</li>
+<li>Price &lt; midprice → active <strong>sell</strong> (downtick / "inside" trade)</li>
+<li>Price = midprice → use <strong>tick test</strong> (compare to previous tick)</li>
+</ol>
+<p>Lee-Ready isn't 100% accurate but is statistically robust at scale.</p>
+<h2 id="large-order-classification">Large-order classification</h2>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Size range (shares)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Retail</td>
+<td>&lt; 4,000</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>4,000 - 20,000</td>
+</tr>
+<tr>
+<td>Large</td>
+<td>20,000 - 100,000</td>
+</tr>
+<tr>
+<td>Super-large</td>
+<td>≥ 100,000</td>
+</tr>
+</tbody>
+</table>
+<p>Thresholds adjust by stock price (high-price stocks have lower thresholds). The <strong>"main capital flow"</strong> indicator is essentially "large + super-large net inflow minus outflow."</p>
+<h2 id="applications">Applications</h2>
+<ul>
+<li><strong>Super-large net inflow + price breakout</strong> → main capital building</li>
+<li><strong>Heavy active sells + price stagnation</strong> → distribution signal</li>
+<li><strong>Tick distribution shape (tail fat/thin)</strong> → microstructure &amp; liquidity</li>
+</ul>
+<p>Data consistency is critical — all signals (backtest + live) should use the same tick feed.</p>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="a-share-price-adjustment-en.html">A-share price adjustment</a></li>
+<li><a href="multi-source-data-validation-en.html">Multi-source data validation</a></li>
+<li><a href="../tick-data-microstructure.html">中文版</a></li>
+<li><a href="https://agent.show.reachrich.ai/glossary/#tick-data">Glossary: tick data, Lee-Ready, large order</a></li>
+</ul>
+<div class="nav"><a href="/insights/en.html">← All EN insights</a> · <a href="/">Home</a> · <a href="https://reachrich.ai">reachrich.ai</a></div>
+<footer>For research demonstration only — not investment advice. © 2026 ReachRich</footer>
+</div></body></html>
